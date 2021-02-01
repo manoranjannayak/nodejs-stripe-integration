@@ -10,7 +10,7 @@
     <script src="https://js.stripe.com/v3"></script>
 
     <div class="row">
-        <form action="/paymentMethod" method="post">
+        <form action="/payment" method="post">
 
         <div class="col-md-5 sec-add-con">
           <div class="pay-address">
@@ -38,59 +38,15 @@
             <label for="number">Card number:</label>
             <input type="text" id="number" name="number"><br><br>
             <label for="exp_month">Expiry month:</label>
-            <input type="number" id="exp_month" name="exp_month" max="2"><br><br>
+            <input type="number" id="exp_month" name="exp_month" ><br><br>
             <label for="exp_year">Year:</label>
-            <input type="number" id="exp_year" name="exp_year" max="4"><br><br>
+            <input type="number" id="exp_year" name="exp_year" ><br><br>
             <label for="cvc">cvc:</label>
             <input type="number" id="cvc" name="cvc"><br><br>
             <input type="submit" value="Submit">
           </div>
         </div>
-
     </form>
-
     </div>
-    <script>
-      ​
-        function login() {
-      ​
-          $('.secondlyValidatableInput input').keydown(event => {
-            $(event.target).parent().parent().removeClass('error')
-          })
-          const email = $('#loginEmail').val()
-          const text = $('#loginPass').val()
-          const remember = $('#remember').is(':checked')
-
-          fetch('/api/account/login', {
-              method: 'POST',
-              credentials: 'same-origin',
-              // xhrFields: { withCredentials: true },
-              // headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, text})
-            })
-              .then((response) => {
-                return response.json()
-              })
-              .then(body => {
-                console.log(body)
-                if (body.success) {
-                  if (body.user.admin) window.location.replace('/admin')
-                  else window.location.replace('/')
-                } else {
-                  // there was an error
-                  if (body.message) alert(body.message)
-                  for (let fieldError of body.fields) {
-                    const validatableInput = $(`.secondlyValidatableInput.${fieldError.name}`)
-                    validatableInput.addClass('error')
-                    validatableInput.find('.secondlyErrorMessage').text(fieldError.message)
-                  }
-                }
-              })
-              .catch(function(error) {
-                console.log(error)
-                alert('There was an error. Please try again.')
-              })
-        }
-    </script>
   </body>
 </html>

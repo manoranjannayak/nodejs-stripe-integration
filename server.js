@@ -1,88 +1,102 @@
-const express = require('express') 
-const bodyparser = require('body-parser') 
-const path = require('path') 
-const app = express() 
-  
-var Publishable_Key = 'pk_test_51Hsv6KLzpNoJw5cRqsZQiQh1hqWafCluHiYVFIt68Y4RjWYsEFX4HGPaquJ3lcxNjOh393Ms39m0V4akBZ46727J00EzprcXql'
-var Secret_Key = 'sk_test_51Hsv6KLzpNoJw5cRhFtvtSixJDOpLwLY0ZzDR6dM0nYcJUv4XV8zV4HUCpRVw0j0vjrhwotun4vAvmrESk4Chgzg00QakDHuoW'
-  
-const stripe = require('stripe')(Secret_Key) 
-  
-const port = process.env.PORT || 3000 
-  
-app.use(bodyparser.urlencoded({extended:false})) 
-app.use(bodyparser.json()) 
+/* eslint-disable camelcase */
+const express = require('express')
+const bodyparser = require('body-parser')
+const path = require('path')
+const app = express()
+const Publishable_Key = 'pk_test_51Hsv6KLzpNoJw5cRqsZQiQh1hqWafCluHiYVFIt68Y4RjWYsEFX4HGPaquJ3lcxNjOh393Ms39m0V4akBZ46727J00EzprcXql'
+const Secret_Key = 'sk_test_51Hsv6KLzpNoJw5cRhFtvtSixJDOpLwLY0ZzDR6dM0nYcJUv4XV8zV4HUCpRVw0j0vjrhwotun4vAvmrESk4Chgzg00QakDHuoW'
+const stripe = require('stripe')(Secret_Key)
 
-app.use(express.static('public'));
-app.set('views', path.join(__dirname, 'views')) 
-app.set('view engine', 'ejs') 
-  
-app.get('/', function(req, res){ 
-    res.render('payment', { 
-       key: Publishable_Key 
-    }) 
-}) 
-  
-  
-// payment method
-app.post('/paymentMethod', async function(req, res){ 
-  console.log("req.body---",req.body);
+const stdRes = require('./utils/standard-response')
 
-  const number = req.body.number
-  const exp_month = req.body.exp_month
-  const exp_year = req.body.exp_year
-  const cvc = req.body.cvc
+const port = process.env.PORT || 3000
 
-  const email = req.body.email
-  const name = req.body.name
-  const phone = req.body.phone
+app.use(bodyparser.urlencoded({ extended: false }))
+app.use(bodyparser.json())
 
-  const city = req.body.city
-  const state = req.body.state
-  const country = req.body.country
-  const postal_code = req.body.postal_code
-  
-    const paymentMethod = await stripe.paymentMethods.create({
-        type: 'card',
-        card: {
-            number,
-            exp_month,
-            exp_year,
-            cvc,
-        },
-        billing_details: {
-            address: {
-              city,
-              country,
-              postal_code,
-              state
-            },
-            email,
-            name,
-            phone
-          }
-    });
+app.use(express.static('public'))
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'ejs')
 
-    console.log("paymentMethod",paymentMethod)
-    res.json(paymentMethod)
-    
+app.get('/', function (_req, res) {
+  res.render('payment', {
+    key: Publishable_Key
+  })
 })
 
-// checkout
-app.post('/checkout', async function(req, res){ 
-    const session = await stripe.checkout.sessions.create({
-        success_url: 'https://example.com/success',
-        cancel_url: 'https://example.com/cancel',
-        payment_method_types: ['card'],
-        line_items: [
-          {price: 'price_H5ggYwtDq4fbrJ', quantity: 2},
-        ],
-        mode: 'payment',
+// validator.fieldValidation,
+
+// payment
+app.post('/payment', async function (req, res) {
+  try {
+    console.log('req.body---', req.body)
+    // Creating customer
+    const customer = await stripe.customers.create({
+      description: 'My First Test Customer (created for API docs)',
+      address: {
+        city: req.body.city,
+        country: req.body.country,
+        postal_code: req.body.postal_code,
+        state: req.body.state
+      },
+      email: req.body.email,
+      name: req.body.name,
+      phone: req.body.phone
     })
-    res.json(session)
-      
+
+    console.log('customer', customer)
+
+    // Creating payment method
+    const paymentMethod = await stripe.paymentMethods.create({
+      type: 'card',
+      card: {
+        number: req.body.number,
+        exp_month: req.body.exp_month,
+        exp_year: req.body.exp_year,
+        cvc: req.body.cvc
+      },
+      billing_details: {
+        address: customer.address,
+        email: customer.email,
+        name: customer.name,
+        phone: customer.phone
+      }
+    })
+
+    console.log('paymentMethod', paymentMethod)
+
+    // Attaching payment method to customer
+    const attachPaymentToCustomer = await stripe.paymentMethods.attach(
+      paymentMethod.id,
+      { customer: customer.id }
+    )
+
+    console.log('attachPaymentToCustomer', attachPaymentToCustomer)
+
+    // creating charges
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 2000, // $20
+      currency: 'usd',
+      customer: customer.id
+    })
+
+    console.log('paymentIntent ', paymentIntent)
+
+    // charges confirmation
+    const paymentIntentConfirmation = await stripe.paymentIntents.confirm(
+      paymentIntent.id,
+      { payment_method: paymentMethod.id }
+    )
+
+    console.log('paymentIntentConfirmation', paymentIntentConfirmation)
+    // return
+    res.json(paymentIntentConfirmation)
+  } catch (error) {
+    console.log('error', error)
+    stdRes._500(res, error.message)
+  }
 })
 
-app.listen(port, function(error){ 
-    console.log("Server created Successfully") 
-}) 
+app.listen(port, function (_error) {
+  console.log('Server created Successfully')
+})
