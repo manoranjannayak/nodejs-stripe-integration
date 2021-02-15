@@ -34,7 +34,12 @@ jobs:
       - name: Build docker image
         run: |
           docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} .
+          
+      - name: Tagging docker image
+        run: |
+          docker tag ${image_id} docker.io/mannu1/${image_name}
+          
       - name: Push docker image
         run: |
-           docker push docker.io/mannu1/test:${{ github.sha }}
+          docker push docker.io/mannu1/${image_name}
 
