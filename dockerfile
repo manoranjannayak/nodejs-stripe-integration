@@ -12,5 +12,5 @@ RUN npm install
 # Bundle app source
 COPY . /app
 
-# run 
+# run image
 CMD [ "npm", "start" ]
