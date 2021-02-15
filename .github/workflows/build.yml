@@ -37,9 +37,9 @@ jobs:
           
       - name: Tagging docker image
         run: |
-          docker tag ${image_id} docker.io/mannu1/${image_name}
+          docker tag v1 docker.io/mannu1/test:test:${{ github.sha }}
           
       - name: Push docker image
         run: |
-          docker push docker.io/mannu1/${image_name}
+          docker push docker.io/mannu1/test:test:${{ github.sha }}
 
