@@ -22,6 +22,11 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: mannu1
+          password: mannudocker@123
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
@@ -29,3 +34,7 @@ jobs:
       - name: Build docker image
         run: |
           docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} .
+      - name: Push docker image
+        run: |
+           docker push mannu1/test:tagname
+
