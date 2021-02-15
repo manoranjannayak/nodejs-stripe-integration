@@ -27,19 +27,16 @@ jobs:
         with:
           username: mannu1
           password: mannudocker@123
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: Build docker image
-        run: |
-          docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} .
           
-      - name: Tagging docker image
-        run: |
-          docker tag v1 docker.io/mannu1/test:${{ github.sha }}
-          
-      - name: Push docker image
-        run: |
-          docker push docker.io/mannu1/test:${{ github.sha }}
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
 
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: mannu/firtsbuild:latest
