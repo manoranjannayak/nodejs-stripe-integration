@@ -28,4 +28,4 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build docker image
         run: |
-          docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} 
+          docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} .
