@@ -36,5 +36,5 @@ jobs:
           docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} .
       - name: Push docker image
         run: |
-           docker push mannu1/test:tagname
+           docker push mannu1/test:${{ github.sha }}
 
