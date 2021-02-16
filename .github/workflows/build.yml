@@ -40,3 +40,5 @@ jobs:
           file: ./dockerfile
           push: true
           tags: mannu/firtsbuild:latest
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
