@@ -32,7 +32,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} .
+          docker build -f ${{ github.workspace }}/dockerfile -t firstimage:${{ github.sha }} .
           
       - name: Tagging docker image
         run: |
