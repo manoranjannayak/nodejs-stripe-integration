@@ -28,6 +28,8 @@ jobs:
           username: mannu1
           password: mannudocker@123
 
+      - uses: actions/checkout@v1
+
       - name: Build docker image
         run: |
           docker build -f ${{ github.workspace }}/dockerfile -t test:${{ github.sha }} .
