@@ -27,10 +27,6 @@ jobs:
         with:
           username: mannu1
           password: mannudocker@123
-          
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
 
       - name: Build docker image
         run: |
