@@ -36,4 +36,4 @@ jobs:
           
       - name: Push docker image
         run: |
-          docker push docker.io/test:${{ github.sha }}
+          docker push mannu1/test:${{ github.sha }}         
