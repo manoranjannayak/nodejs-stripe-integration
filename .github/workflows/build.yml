@@ -29,6 +29,9 @@ jobs:
           password: mannudocker@123
 
       - uses: actions/checkout@v1
+      - name: Logout docker
+        run: |
+          docker logout
 
       - name: Build docker image
         run: |
