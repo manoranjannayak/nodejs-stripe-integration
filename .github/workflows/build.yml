@@ -35,4 +35,5 @@ jobs:
           docker build -t firstimage:latest .
       - name: Push docker image
         run: |
-          docker push firstimage:latest    
+            echo mannudocker@123 | docker login -u mannu1 --password-stdin
+            docker push firstimage:latest  
