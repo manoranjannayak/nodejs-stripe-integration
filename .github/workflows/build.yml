@@ -32,8 +32,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build -f ${{ github.workspace }}/dockerfile -t firstimage:${{ github.sha }} .
-          
+          docker build -t firstimage:latest .
       - name: Push docker image
         run: |
-          docker push docker.io/firstimage:${{ github.sha }}       
+          docker push firstimage:latest    
