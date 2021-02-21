@@ -31,7 +31,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build -t test:latest .
+          docker build -t mannu1/test:latest .
       - name: Push docker image
         run: |
             echo mannudocker@123 | docker login -u mannu1 --password-stdin
