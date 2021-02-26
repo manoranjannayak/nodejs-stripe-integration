@@ -28,12 +28,3 @@ jobs:
       - name: Logout docker
         run: |
           docker logout
-
-      # Configure AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: AKIA22QC5UXVXKKLFH4A
-          aws-secret-access-key: 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
-          aws-region: us-east-2
-          
