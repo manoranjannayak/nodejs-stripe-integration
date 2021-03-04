@@ -22,12 +22,12 @@ jobs:
 
     - name: Build docker image
       run: |
-        docker build -f ${{ github.workspace }}/dockerfile -t nodejs-hello-world:${{ github.sha }} .
+        docker build -f ${{ github.workspace }}/dockerfile -t mannu1/nodejs-hello-world:${{ github.sha }} .
         
     - name: Push docker image
       run: |
             echo mannudocker@123 | docker login -u mannu1 --password-stdin
-            docker push mannu1/test:latest  
+            docker push mannu1/nodejs-hello-world:${{ github.sha }}  
             
     - uses: actions/checkout@v1
     - name: Logout docker
