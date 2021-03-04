@@ -15,16 +15,21 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  build-image:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-     
+    - uses: actions/checkout@v1
 
-      - uses: actions/checkout@v1
-      - name: Logout docker
-        run: |
+    - name: Build docker image
+      run: |
+        docker build -f ${{ github.workspace }}/dockerfile -t nodejs-hello-world:${{ github.sha }} .
+        
+    - name: Push docker image
+      run: |
+            echo mannudocker@123 | docker login -u mannu1 --password-stdin
+            docker push mannu1/test:latest  
+            
+    - uses: actions/checkout@v1
+    - name: Logout docker
+      run: |
           docker logout
